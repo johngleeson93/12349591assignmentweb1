@@ -9,7 +9,7 @@ const Poi = {
   report: {
     handler: function (request, h) {
       return h.view("report", {
-        title: "Islands  ",
+        title: "POIs  ",
         pois: this.pois,
       });
     },
@@ -17,7 +17,8 @@ const Poi = {
   create: {
     handler: function (request, h) {
       const data = request.payload;
-      data.creator = this.currentUser;
+      var creatorEmail = request.auth.credentials.id;
+      data.donor = this.users[creatorEmail];
       this.pois.push(data);
       return h.redirect("/report");
     },

@@ -5,12 +5,36 @@ const Inert = require("@hapi/inert");
 const Vision = require("@hapi/vision");
 const Handlebars = require("handlebars");
 const Cookie = require("@hapi/cookie");
+const express = require('express');
+const multer = require('multer');
+const path = require('path');
+const app = express();
 
 const server = Hapi.server({
   port: 3000,
   host: "localhost"
 });
 
+app.use(express.static(__dirname + '/public/uploads'));
+
+const MongoClient = require('mongodb').MongoClient;
+const uri = "mongodb+srv://johngleeson93:<Johnnyg93>@johnscluster.7bntq.mongodb.net/johnsCluster?retryWrites=true&w=majority";
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+client.connect(err => {
+  const collection = client.db("test").collection("devices");
+  // perform actions on the collection object
+  client.close();
+});
+const storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, 'uploads/');
+  },
+
+  // By default, multer removes file extensions so let's add them back
+  filename: function(req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+  }
+});
 server.bind({
   users: [],
   //currentUser: [],
